@@ -53,6 +53,7 @@ app.use((err, req, res, next) => {
 
   return next;
 });
+
 let countdown = 30;
 let intervalId = null;
 
