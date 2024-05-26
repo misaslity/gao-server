@@ -54,7 +54,7 @@ app.use((err, req, res, next) => {
   return next;
 });
 
-let countdown = 30;
+let countdown = 10;
 let intervalId = null;
 
 const sendCountdown = async (io) => {
@@ -70,13 +70,16 @@ const sendCountdown = async (io) => {
       numbers,
     ]);
     const [rows]= await connection.query("SELECT * FROM result")
+    const [rows1]= await connection.query("SELECT * FROM session ORDER BY id DESC LIMIT 4")
+    rows1.unshift(rows[0])
     io.emit("result", {result: rows[0].result, number: rows[0].number, id: rows[0].id});
+    io.emit("last5session", {data: rows1})
     await connection.query("INSERT INTO session(result, number, session_id) VALUES (?, ?, ?)", [
       result,
       numbers,
       rows[0].id
     ]);
-    countdown = 30;
+    countdown = 10;
   }
 };
 
