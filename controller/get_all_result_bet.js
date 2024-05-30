@@ -9,7 +9,7 @@ const get_all_result_bet = async (req, res)=> {
         const offset = (page - 1) * limit;
 
         // Truy vấn để lấy dữ liệu cho trang hiện tại
-        const [rows] = await connection.query(`SELECT * FROM bet LEFT JOIN user ON bet.user_id = user.id LEFT JOIN session ON session.session_id = bet.session_id ORDER BY time_created DESC LIMIT ?, ?`, [offset, limit]);
+        const [rows] = await connection.query(`SELECT * FROM bet LEFT JOIN user ON bet.user_id = user.id LEFT JOIN session ON session.session_id = bet.session_id ORDER BY timeInt DESC LIMIT ?, ?`, [offset, limit]);
 
         // Truy vấn để lấy tổng số trang
         const [totalRows] = await connection.query(`SELECT COUNT(*) as totalRows FROM bet`);

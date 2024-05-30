@@ -5,18 +5,15 @@ const update_user_bet_result = async (req, res) => {
     const { uid } = req.user;
     const { id, final1, final2, number, result } = req.body;
     const [rows] = await connection.query(
-      "SELECT val1, val2, betMoney FROM bet WHERE session_id= ? AND user_id= ?",
+      "SELECT betMoney, bet FROM bet WHERE session_id= ? AND user_id= ?",
       [id, uid]
     );
     if (rows?.length > 0) {
-      const val1 = parseInt(rows[0].val1);
-      const val2 = parseInt(rows[0].val2);
+      const bet= rows[0].bet
       const betMoney = parseInt(rows[0].betMoney);
       const totalFinal = parseInt(final1) + parseInt(final2);
-      const totalBet = val1 + val2;
       if (
-        (totalBet <= 10 && totalFinal <= 10) ||
-        (totalBet > 10 && totalFinal > 10)
+        ((totalFinal <= 10 && bet == 1) || (totalFinal > 10 && bet == 2))
       ) {
         await connection.query(
           "UPDATE user SET balance = balance + ? WHERE id = ?",

@@ -25,7 +25,9 @@ exports.login = async (req, res) => {
         .status(401)
         .json({ message: "Tên tài khoản hoặc mật khẩu không đúng", ok: false });
     }
-
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    const timeLogin= new Date().toString()
+    await connection.query("UPDATE user SET ip_login= ?, time_last_login= ? WHERE id= ?", [ip, timeLogin, user.id])
     // Tạo token JWT
     const token = jwt.sign({ uid: user.id, role: user.role }, "1245678", {
       expiresIn: "24h",

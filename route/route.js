@@ -33,6 +33,8 @@ const get_last_session = require('../controller/get_last_session');
 const get_last_user_betting = require('../controller/get_last_user_betting');
 const get_history_bet = require('../controller/get_history_bet');
 const update_user_bet_result = require('../controller/update_user_bet_result');
+const update_user_banking = require('../controller/update_user_banking');
+const get_user_banking = require('../controller/get_user_banking');
 // const { getUsers } = require('../controllers/userController');
 
 const router = express.Router();
@@ -46,6 +48,8 @@ router.post('/api/v1/login', login);
 router.post('/api/v1/register', register);
 router.post('/api/v1/deposit', requireAuth, deposit);
 router.put('/api/v1/user', requireAuth, update_user);
+router.put('/api/v1/user/banking', requireAuth, update_user_banking);
+router.get('/api/v1/user/banking', requireAuth, get_user_banking);
 router.post('/api/v1/withdraw', requireAuth, withdraw);
 router.get('/api/v1/profile', requireAuth, get_profile);
 router.get('/api/v1/last/session', requireAuth, get_last_session);
