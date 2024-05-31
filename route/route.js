@@ -35,6 +35,11 @@ const get_history_bet = require('../controller/get_history_bet');
 const update_user_bet_result = require('../controller/update_user_bet_result');
 const update_user_banking = require('../controller/update_user_banking');
 const get_user_banking = require('../controller/get_user_banking');
+const test = require('../controller/test');
+const test2 = require('../controller/test2');
+const test3 = require('../controller/test3');
+const test4 = require('../controller/test4');
+const update_user_fund_password = require('../controller/update_user_fund_password');
 // const { getUsers } = require('../controllers/userController');
 
 const router = express.Router();
@@ -76,7 +81,13 @@ router.put('/api/v2/user/balance', requireAuth, checkAdmin, update_user_balance_
 router.delete('/api/v2/user', requireAuth, checkAdmin, delete_user_admin);
 router.delete('/api/v1/user', requireAuth, delete_user);
 
-router.get("/api/v1/user/history/bet", requireAuth, get_history_bet)
 router.put("/api/v1/user/bet/result", requireAuth, update_user_bet_result)
+router.put("/api/v1/user/config/fund/password", requireAuth, update_user_fund_password)
+router.get("/api/v1/user/history/bet", requireAuth, get_history_bet)
+
+router.post("/api/v1/test", test)
+router.post("/api/v1/test2", test2)
+router.post("/api/v1/test3", test3)
+router.post("/api/v1/test4", test4)
 
 module.exports = router;

@@ -20,6 +20,9 @@ const update_user_bet_result = async (req, res) => {
           "UPDATE user SET balance = balance + ? WHERE id = ?",
           [betMoney * 2, uid]
         );
+        await connection.query(
+          "UPDATE bet SET status= 1 WHERE session_id= ? AND user_id= ?", [id, uid]
+        )
       }
       //  lose
       else {
@@ -27,6 +30,9 @@ const update_user_bet_result = async (req, res) => {
           "UPDATE user SET balance = balance WHERE id = ?",
           [uid]
         );
+        await connection.query(
+          "UPDATE bet SET status= 2 WHERE session_id= ? AND user_id= ?", [id, uid]
+        )
       }
       return res.json({ ok: true });
     }

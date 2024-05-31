@@ -10,11 +10,11 @@ const withdraw = async (req, res) => {
       uid,
     ]);
     const user = rows[0];
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, user.fund_password);
     if (!isMatch) {
       return res
         .status(401)
-        .json({ message: "Mật khẩu không đúng", ok: false });
+        .json({ message: "Mật khẩu quỹ không đúng", ok: false });
     }
     const realEnough= parseInt(amount) * 1000
     const isEnoughBalance= rows[0].balance >= realEnough

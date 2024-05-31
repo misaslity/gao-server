@@ -4,47 +4,40 @@ const dayjs = require("dayjs");
 const get_history_bet = async (req, res) => {
   const { uid } = req.user;
   const { page = 1, fromDate, toDate, status } = req.query;
-  const limit = 10; // Số lượng bản ghi mỗi trang
+  const limit = 10; // Number of records per page
   const offset = (page - 1) * limit;
 
   try {
-    // Chuyển đổi định dạng ngày giờ từ định dạng "Wed May 22 2024 02:25:08 GMT+0700 (Indochina Time)"
-    const fromDateFormatted = fromDate
-      ? dayjs(new Date(fromDate)).format(
-          "ddd MMM DD YYYY HH:mm:ss [GMT]ZZ [(Indochina Time)]"
-        )
-      : null;
-    const toDateFormatted = toDate
-      ? dayjs(new Date(toDate)).format(
-          "ddd MMM DD YYYY HH:mm:ss [GMT]ZZ [(Indochina Time)]"
-        )
-      : null;
-
-    // Xây dựng câu truy vấn SQL với điều kiện tìm kiếm
+    // Convert dates to UNIX timestamps
+    const fromDateTimestamp = fromDate ? dayjs(fromDate).unix() : null;
+    const toDateTimestamp = toDate ? dayjs(toDate).unix() : null;
+    // console.log(fromDateTimestamp)
+    // Build SQL query with search conditions
     let query = `
-      SELECT bet.*, user.*, session.* FROM bet 
+      SELECT bet.*, user.*, session.* 
+      FROM bet 
       INNER JOIN user ON bet.user_id = user.id 
-      LEFT JOIN session ON session.session_id = bet.session_id 
+      INNER JOIN session ON session.session_id = bet.session_id 
       WHERE bet.user_id = ?
     `;
 
-    // Thêm điều kiện cho ngày bắt đầu
-    if (fromDateFormatted) {
-      query += ` AND STR_TO_DATE(bet.time_created, '%a %b %d %Y %H:%i:%s GMT%z (Indochina Time)') >= STR_TO_DATE('${fromDateFormatted}', '%a %b %d %Y %H:%i:%s GMT%z (Indochina Time)')`;
+    // Add condition for start date
+    if (fromDateTimestamp) {
+      query += ` AND UNIX_TIMESTAMP(STR_TO_DATE(SUBSTRING(bet.time_created, 5, 20), '%b %d %Y %H:%i:%s')) >= ${fromDateTimestamp}`;
     }
 
-    // Thêm điều kiện cho ngày kết thúc
-    if (toDateFormatted) {
-      query += ` AND STR_TO_DATE(bet.time_created, '%a %b %d %Y %H:%i:%s GMT%z (Indochina Time)') <= STR_TO_DATE('${toDateFormatted}', '%a %b %d %Y %H:%i:%s GMT%z (Indochina Time)')`;
+    // Add condition for end date
+    if (toDateTimestamp) {
+      query += ` AND UNIX_TIMESTAMP(STR_TO_DATE(SUBSTRING(bet.time_created, 5, 20), '%b %d %Y %H:%i:%s')) <= ${toDateTimestamp}`;
     }
 
-    // Thêm sắp xếp và phân trang
-    query += ` ORDER BY bet.time_created DESC LIMIT ? OFFSET ?`;
+    // Add sorting and pagination
+    query += ` ORDER BY bet.timeInt DESC LIMIT ? OFFSET ?`;
 
-    // Thực hiện truy vấn
+    // Execute query
     const [rows] = await connection.query(query, [uid, limit, offset]);
 
-    // Đếm tổng số bản ghi
+    // Count total records
     let countQuery = `
       SELECT COUNT(*) as total 
       FROM bet 
@@ -53,12 +46,12 @@ const get_history_bet = async (req, res) => {
       WHERE bet.user_id = ?
     `;
 
-    if (fromDateFormatted) {
-      countQuery += ` AND STR_TO_DATE(bet.time_created, '%a %b %d %Y %H:%i:%s GMT%z (Indochina Time)') >= STR_TO_DATE('${fromDateFormatted}', '%a %b %d %Y %H:%i:%s GMT%z (Indochina Time)')`;
+    if (fromDateTimestamp) {
+      countQuery += ` AND UNIX_TIMESTAMP(STR_TO_DATE(bet.time_created, '%a %b %d %Y %H:%i:%s GMT%z (Indochina Time)')) >= ${fromDateTimestamp}`;
     }
 
-    if (toDateFormatted) {
-      countQuery += ` AND STR_TO_DATE(bet.time_created, '%a %b %d %Y %H:%i:%s GMT%z (Indochina Time)') <= STR_TO_DATE('${toDateFormatted}', '%a %b %d %Y %H:%i:%s GMT%z (Indochina Time)')`;
+    if (toDateTimestamp) {
+      countQuery += ` AND UNIX_TIMESTAMP(STR_TO_DATE(bet.time_created, '%a %b %d %Y %H:%i:%s GMT%z (Indochina Time)')) <= ${toDateTimestamp}`;
     }
 
     const [countRows] = await connection.query(countQuery, [uid]);
@@ -74,7 +67,7 @@ const get_history_bet = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    return res.json({ ok: false });
+    return res.status(500).json({ ok: false, error: "Internal server error" });
   }
 };
 
