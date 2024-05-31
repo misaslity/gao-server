@@ -12,17 +12,20 @@ const update_user_bet_result = async (req, res) => {
       const bet= rows[0].bet
       const betMoney = parseInt(rows[0].betMoney);
       const totalFinal = parseInt(final1) + parseInt(final2);
+      // win
       if (
         ((totalFinal <= 10 && bet == 1) || (totalFinal > 10 && bet == 2))
       ) {
         await connection.query(
           "UPDATE user SET balance = balance + ? WHERE id = ?",
-          [betMoney, uid]
+          [betMoney * 2, uid]
         );
-      } else {
+      }
+      //  lose
+      else {
         await connection.query(
-          "UPDATE user SET balance = balance - ? WHERE id = ?",
-          [betMoney, uid]
+          "UPDATE user SET balance = balance WHERE id = ?",
+          [uid]
         );
       }
       return res.json({ ok: true });

@@ -54,7 +54,7 @@ app.use((err, req, res, next) => {
   return next;
 });
 
-let countdown = 180;
+let countdown = 20;
 let intervalId = null;
 
 const sendCountdown = async (io) => {
@@ -79,7 +79,7 @@ const sendCountdown = async (io) => {
       numbers,
       rows[0].id
     ]);
-    countdown = 180;
+    countdown = 20;
   }
 };
 
