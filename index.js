@@ -6,6 +6,7 @@ const { Server } = require("socket.io");
 const cors = require("cors");
 const router = require("./route/route.js");
 const connection = require("./database/index.js");
+const moment= require("moment")
 require('dotenv').config();
 
 const app = express();
@@ -74,10 +75,14 @@ const sendCountdown = async (io) => {
     rows1.unshift(rows[0])
     io.emit("result", {result: rows[0].result, number: rows[0].number, id: rows[0].id});
     io.emit("last5session", {data: rows1})
-    await connection.query("INSERT INTO session(result, number, session_id) VALUES (?, ?, ?)", [
+    const timeCreated= new Date().toString()
+    const timeInt= moment(new Date()).valueOf()
+    await connection.query("INSERT INTO session(result, number, session_id, time_created, timeInt) VALUES (?, ?, ?, ?, ?)", [
       result,
       numbers,
-      rows[0].id
+      rows[0].id,
+      timeCreated,
+      timeInt
     ]);
     countdown = 180;
   }

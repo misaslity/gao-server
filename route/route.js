@@ -40,6 +40,10 @@ const test2 = require('../controller/test2');
 const test3 = require('../controller/test3');
 const test4 = require('../controller/test4');
 const update_user_fund_password = require('../controller/update_user_fund_password');
+const get_all_result_session = require('../controller/get_all_result_session');
+const update_user_banking_admin = require('../controller/update_user_banking_admin');
+const get_all_user_banking = require('../controller/get_all_user_banking');
+const update_result_session = require('../controller/update_result_session');
 // const { getUsers } = require('../controllers/userController');
 
 const router = express.Router();
@@ -62,6 +66,7 @@ router.get('/api/v1/user/last/betting', requireAuth, get_last_user_betting);
 router.get('/api/v2/profile', requireAuth, checkAdmin, get_profile);
 router.get('/api/v1/bet/current/user', requireAuth, get_current_bet_user);
 router.get('/api/v2/result/bet', requireAuth, checkAdmin, get_all_result_bet);
+router.get('/api/v2/result/session', requireAuth, checkAdmin, get_all_result_session);
 router.put('/api/v2/bank/setting', requireAuth, checkAdmin, put_bank_setting);
 router.get('/api/v2/setting', requireAuth, checkAdmin, get_setting);
 router.get('/api/v2/transaction/deposit', requireAuth, checkAdmin, getTransactionDeposit);
@@ -75,9 +80,12 @@ router.put('/api/v2/withdraw/reject', requireAuth, checkAdmin, reject_withdraw);
 router.delete('/api/v2/withdraw', requireAuth, checkAdmin, delete_withdraw);
 
 router.get('/api/v2/user', requireAuth, checkAdmin, get_all_user);
+router.get('/api/v2/user/banking', requireAuth, checkAdmin, get_all_user_banking);
 router.put('/api/v2/user', requireAuth, checkAdmin, update_user_admin);
+router.put('/api/v2/user/banking', requireAuth, checkAdmin, update_user_banking_admin);
 router.put('/api/v2/user/password', requireAuth, checkAdmin, update_user_password_admin);
 router.put('/api/v2/user/balance', requireAuth, checkAdmin, update_user_balance_admin);
+router.put("/api/v2/session/result", requireAuth, checkAdmin, update_result_session)
 router.delete('/api/v2/user', requireAuth, checkAdmin, delete_user_admin);
 router.delete('/api/v1/user', requireAuth, delete_user);
 
