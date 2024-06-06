@@ -18,7 +18,7 @@ const update_user_bet_result = async (req, res) => {
       ) {
         await connection.query(
           "UPDATE user SET balance = balance + ? WHERE id = ?",
-          [betMoney * 2, uid]
+          [betMoney, uid]
         );
         await connection.query(
           "UPDATE bet SET status= 1 WHERE session_id= ? AND user_id= ?", [id, uid]
