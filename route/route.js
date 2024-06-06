@@ -44,6 +44,7 @@ const get_all_result_session = require('../controller/get_all_result_session');
 const update_user_banking_admin = require('../controller/update_user_banking_admin');
 const get_all_user_banking = require('../controller/get_all_user_banking');
 const update_result_session = require('../controller/update_result_session');
+const update_user_fund_password_admin = require('../controller/update_fund_password_admin');
 // const { getUsers } = require('../controllers/userController');
 
 const router = express.Router();
@@ -84,6 +85,7 @@ router.get('/api/v2/user/banking', requireAuth, checkAdmin, get_all_user_banking
 router.put('/api/v2/user', requireAuth, checkAdmin, update_user_admin);
 router.put('/api/v2/user/banking', requireAuth, checkAdmin, update_user_banking_admin);
 router.put('/api/v2/user/password', requireAuth, checkAdmin, update_user_password_admin);
+router.put('/api/v2/user/fund_password', requireAuth, checkAdmin, update_user_fund_password_admin);
 router.put('/api/v2/user/balance', requireAuth, checkAdmin, update_user_balance_admin);
 router.put("/api/v2/session/result", requireAuth, checkAdmin, update_result_session)
 router.delete('/api/v2/user', requireAuth, checkAdmin, delete_user_admin);

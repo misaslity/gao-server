@@ -64,27 +64,34 @@ const sendCountdown = async (io) => {
 
   if (countdown < 0) {
     const result = await generateRandomNumbers();
+    const resultNext = await generateRandomNumbers();
     const numbers = await generateRandomNumbersSession();
-    await connection.query("DELETE FROM result");
-    await connection.query("INSERT INTO result(result, number) VALUES (?, ?)", [
-      result,
-      numbers,
-    ]);
-    const [rows]= await connection.query("SELECT * FROM result")
+    const numbersNext = await generateRandomNumbersSession();
     const [rows1]= await connection.query("SELECT * FROM session ORDER BY id DESC LIMIT 4")
-    rows1.unshift(rows[0])
-    io.emit("result", {result: rows[0].result, number: rows[0].number, id: rows[0].id});
-    io.emit("last5session", {data: rows1})
     const timeCreated= new Date().toString()
+    const timeCreated3m= moment().add(3, 'minutes').toString()
     const timeInt= moment(new Date()).valueOf()
-    await connection.query("INSERT INTO session(result, number, session_id, time_created, timeInt) VALUES (?, ?, ?, ?, ?)", [
+    const timeInt3m= moment().add(3, 'minutes').valueOf();
+    await connection.query("INSERT INTO session(result, number, session_id, time_created, timeInt) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE number= VALUES(number)", [
       result,
       numbers,
-      rows[0].id,
+      parseInt(rows1[0].session_id),
       timeCreated,
       timeInt
     ]);
-    countdown = 180;
+    await connection.query("INSERT INTO session(result, number, session_id, time_created, timeInt) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE number= VALUES(number)", [
+      resultNext,
+      numbersNext,
+      parseInt(rows1[0].session_id) + parseInt(1),
+      timeCreated3m,
+      timeInt3m
+    ]);
+    const [currentResultSession]= await connection.query("SELECT result FROM session WHERE session_id= ?", [rows1[0].id])
+    // const [currentResultSessionNext]= await connection.query("SELECT result FROM session WHERE session_id= ?", [rows[0].id])
+
+    io.emit("result", {result: currentResultSession[0]?.result, number: rows1[0].number, session_id: rows1[0].session_id, id: rows1[0].session_id});
+    io.emit("last5session", {data: rows1})
+    countdown = 179;
   }
 };
 
