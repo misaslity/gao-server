@@ -55,7 +55,7 @@ app.use((err, req, res, next) => {
   return next;
 });
 
-let countdown = 20;
+let countdown = 180;
 let intervalId = null;
 
 const sendCountdown = async (io) => {
@@ -91,7 +91,7 @@ const sendCountdown = async (io) => {
 
     io.emit("result", {result: rows1[0]?.result, number: rows1[0].number, session_id: rows1[0].session_id, id: rows1[0].session_id, x: currentResultSession[0]});
     io.emit("last5session", {data: rows1})
-    countdown = 19;
+    countdown = 179;
   }
 };
 
