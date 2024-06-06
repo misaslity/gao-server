@@ -55,7 +55,7 @@ app.use((err, req, res, next) => {
   return next;
 });
 
-let countdown = 180;
+let countdown = 20;
 let intervalId = null;
 
 const sendCountdown = async (io) => {
@@ -67,7 +67,7 @@ const sendCountdown = async (io) => {
     const resultNext = await generateRandomNumbers();
     const numbers = await generateRandomNumbersSession();
     const numbersNext = await generateRandomNumbersSession();
-    const [rows1]= await connection.query("SELECT * FROM session ORDER BY id DESC LIMIT 4")
+    const [rows1]= await connection.query("SELECT * FROM session ORDER BY id DESC LIMIT 5")
     const timeCreated= new Date().toString()
     const timeCreated3m= moment().add(3, 'minutes').toString()
     const timeInt= moment(new Date()).valueOf()
@@ -89,9 +89,9 @@ const sendCountdown = async (io) => {
     const [currentResultSession]= await connection.query("SELECT result FROM session WHERE session_id= ?", [rows1[0].id])
     // const [currentResultSessionNext]= await connection.query("SELECT result FROM session WHERE session_id= ?", [rows[0].id])
 
-    io.emit("result", {result: currentResultSession[0]?.result, number: rows1[0].number, session_id: rows1[0].session_id, id: rows1[0].session_id});
+    io.emit("result", {result: rows1[0]?.result, number: rows1[0].number, session_id: rows1[0].session_id, id: rows1[0].session_id, x: currentResultSession[0]});
     io.emit("last5session", {data: rows1})
-    countdown = 179;
+    countdown = 19;
   }
 };
 
